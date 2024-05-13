@@ -2,7 +2,7 @@ version: '3.7'
 services:
   pg_pv:
     image: 'postgres:16'
-    container_name: 'pg_pv_16'
+    container_name: 'pg_pv'
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
