@@ -12,3 +12,59 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model users {
+  id          String      @id @default(uuid())
+  first_name  String
+  last_name   String
+  full_name   String
+  contact     Json?       @db.JsonB
+  description String?     @db.Text
+  email       String      @unique
+  username    String      @unique
+  password    String
+  status      Boolean     @default(true)
+  metadata    Json?       @db.JsonB
+  roles       user_role[]
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+model roles {
+  id           String            @id @default(uuid())
+  display_name String
+  name         String            @unique
+  description  String?           @db.Text
+  users        user_role[]
+  permissions  role_permission[]
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+}
+
+model permissions {
+  id           String            @id @default(uuid())
+  display_name String
+  name         String            @unique
+  description  String?           @db.Text
+  roles        role_permission[]
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+}
+
+model user_role {
+  user    users  @relation(fields: [user_id], references: [id])
+  user_id String
+  role    roles  @relation(fields: [role_id], references: [id])
+  role_id String
+
+  @@id([user_id, role_id])
+}
+
+model role_permission {
+  role          roles       @relation(fields: [role_id], references: [id])
+  role_id       String
+  permission    permissions @relation(fields: [permission_id], references: [id])
+  permission_id String
+
+  @@id([role_id, permission_id])
+}
